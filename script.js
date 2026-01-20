@@ -9,6 +9,8 @@ let current = 0;
 let activeQuestions = [];
 let currentSubject = "";
 let selectedSubject = null;
+let isInitialExamRun = false;
+
 
 // holds shuffled answers for CURRENT question only
 let currentAnswers = [];
@@ -183,6 +185,7 @@ function startTraining(subject) {
 
 function startExam(subject) {
   mode = "exam";
+  isInitialExamRun = true;
   resetStats();
   startQuiz(subject);
 }
@@ -202,6 +205,7 @@ function updateCorrectCounter() {
 }
 
 function startQuiz(subject) {
+  document.getElementById("history").style.display = "none";
   currentSubject = subject;
 
   document.getElementById("quizSubjectTitle").textContent =
@@ -335,21 +339,41 @@ function endQuiz() {
     (correctCount / activeQuestions.length) * 100
   );
 
-  if (mode === "exam") saveExamResult();
+  // Save exam result exactly once (unchanged behaviour)
+  if (mode === "exam" && isInitialExamRun) {
+  saveExamResult();
+}
 
   const color = percent >= 75 ? "green" : "red";
 
   document.getElementById("quizMain").style.display = "none";
   document.getElementById("quizEnd").style.display = "block";
 
+  let buttons = `
+    <div style="display:flex; gap:20px; margin-top:20px;">
+  `;
+
+  // SAME behaviour for training AND exam
+  if (wrongQuestions.length > 0) {
+    buttons += `
+      <button onclick="retryWrongAnswers()">Retake wrong answers</button>
+    `;
+  }
+
+  buttons += `
+      <button onclick="location.reload()">Back to menu</button>
+    </div>
+  `;
+
   document.getElementById("quizEnd").innerHTML = `
     <h2>Quiz finished</h2>
     <p style="font-size:20px;color:${color}">
       Correct: ${correctCount} / ${activeQuestions.length} (${percent}%)
     </p>
-    <button onclick="location.reload()">Back to menu</button>
+    ${buttons}
   `;
 }
+
 
 /**********************************************************
  * SHUFFLE ANSWERS (SAFE)
@@ -388,6 +412,8 @@ function saveExamResult() {
 
 /* Show history screen */
 function showHistory() {
+  document.getElementById("quiz").style.display = "none";
+
   const historyDiv = document.getElementById("historyList");
   historyDiv.innerHTML = "";
 
@@ -408,10 +434,30 @@ function showHistory() {
   document.getElementById("history").style.display = "block";
 }
 
+/* Retry wrong answers */
+function retryWrongAnswers() {
+  isInitialExamRun = false;
+
+  activeQuestions = [...wrongQuestions];
+  wrongQuestions = [];
+  current = 0;
+  correctCount = 0;
+
+  document.getElementById("quizEnd").style.display = "none";
+  document.getElementById("quizMain").style.display = "block";
+
+  updateCorrectCounter();
+  showQuestion();
+}
+
 /* Back to main menu */
 function backToMenu() {
+  document.getElementById("quiz").style.display = "none";
   document.getElementById("history").style.display = "none";
   document.getElementById("menu").style.display = "block";
 }
 
-
+function clearExamHistory() {
+  localStorage.removeItem("ppl_exam_history");
+  document.getElementById("historyList").innerHTML = "";
+}
