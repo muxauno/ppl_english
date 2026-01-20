@@ -206,6 +206,9 @@ function updateCorrectCounter() {
 function startQuiz(subject) {
   currentSubject = subject;
 
+  document.getElementById("quizSubjectTitle").textContent =
+  subjectNames[subject];
+
   const pool = subjectPools[subject];
   if (!pool || pool.length === 0) {
     alert("No questions available for this subject yet.");

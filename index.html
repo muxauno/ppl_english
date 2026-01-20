@@ -7,11 +7,12 @@
 
   <!-- ================= CSS: GLOBAL + LAYOUT ================= -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
-    }
+body {
+  font-family: Arial, sans-serif;
+  max-width: 700px;
+  margin: 40px auto;
+  background-color: #bfbfbf;
+}
 
     button {
       display: block;
@@ -37,6 +38,10 @@
     line-height: 1.45;
     padding: 0;
   }
+
+body {
+  background-color: #bfbfbf;
+}
 
   #menu,
   #quiz,
@@ -164,6 +169,33 @@
     #exitBtn:hover {
       background-color: #c9302c;
     }
+
+   /* ===============================
+   MIND AVIATION LOGO
+   =============================== */
+
+#logoWrap {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+#logoWrap img {
+  max-width: 280px;
+  width: 70%;
+  height: auto;
+}
+
+/* Mobile adjustment */
+@media (max-width: 600px) {
+  #logoWrap {
+    margin-bottom: 25px;
+  }
+
+  #logoWrap img {
+    max-width: 200px;
+  }
+}
+
   </style>
 </head>
 
@@ -171,7 +203,9 @@
 
 <!-- ================= MAIN MENU ================= -->
 <div id="menu">
-  <h2>Select subject</h2>
+  <div id="logoWrap">
+    <img src="mind_aviation.png" alt="Mind Aviation">
+  </div>
 
   <div id="subjectList">
 <button onclick="openModePopup('airlaw')">Air Law</button>
@@ -201,7 +235,7 @@
 
 <!-- ================= QUIZ ================= -->
 <div id="quiz">
-
+<h2 id="quizSubjectTitle" style="text-align:center; margin-bottom:15px;"></h2>
   <!-- Active quiz -->
   <div id="quizMain">
     <div id="progress"></div>
