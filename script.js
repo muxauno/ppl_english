@@ -10,6 +10,7 @@ let activeQuestions = [];
 let currentSubject = "";
 let selectedSubject = null;
 let isInitialExamRun = false;
+let currentFigurePath = null;
 
 
 // holds shuffled answers for CURRENT question only
@@ -248,6 +249,22 @@ function showQuestion() {
     `Question ${current + 1} / ${activeQuestions.length}`;
   document.getElementById("question").innerText = q.question;
 
+  const match = q.question.match(/\(see Figure ([^)]+)\)/i);
+const figureBtn = document.getElementById("figureBtn");
+
+if (match) {
+  const figureName = match[1]
+  .toLowerCase()
+  .replace(/\./g, "")      // remove dots
+  .replace(/\s+/g, "-");   // spaces → hyphens
+
+  currentFigurePath = `images/figures/${figureName}.jpg`;
+  figureBtn.style.display = "inline-block";
+} else {
+  currentFigurePath = null;
+  figureBtn.style.display = "none";
+}
+
   const shuffled = shuffleAnswers(q);
   currentAnswers = shuffled.answers;
   currentCorrectIndex = shuffled.correct;
@@ -460,4 +477,15 @@ function backToMenu() {
 function clearExamHistory() {
   localStorage.removeItem("ppl_exam_history");
   document.getElementById("historyList").innerHTML = "";
+}
+
+function openFigure() {
+  if (!currentFigurePath) return;
+
+  document.getElementById("figureImage").src = currentFigurePath;
+  document.getElementById("figureModal").style.display = "flex";
+}
+
+function closeFigure() {
+  document.getElementById("figureModal").style.display = "none";
 }
