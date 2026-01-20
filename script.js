@@ -1,5 +1,3 @@
-alert("NEW SCRIPT LOADED");
-
 /**********************************************************
  * GLOBAL STATE
  **********************************************************/
@@ -415,4 +413,5 @@ function backToMenu() {
   document.getElementById("history").style.display = "none";
   document.getElementById("menu").style.display = "block";
 }
+
 
