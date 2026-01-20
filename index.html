@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>PPL Quiz</title>
 
@@ -24,6 +25,86 @@
     /* Correct / wrong answer feedback */
     .correct { background-color: #c8f7c5; }
     .wrong   { background-color: #f7c5c5; }
+
+/* ==================================================
+   MOBILE UI IMPROVEMENTS (SAFE)
+   ================================================== */
+
+@media (max-width: 600px) {
+
+  body {
+    font-size: 16px;
+    line-height: 1.45;
+    padding: 0;
+  }
+
+  #menu,
+  #quiz,
+  #history {
+    padding: 12px;
+  }
+
+  h1, h2, h3 {
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  /* Question text */
+  #question {
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+  }
+
+  /* Answer buttons */
+  .answer-btn,
+  button {
+    display: block;
+    width: 100%;
+    padding: 14px 12px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    line-height: 1.3;
+    border-radius: 8px;
+  }
+
+  /* Prevent tiny tap targets */
+  button {
+    min-height: 48px;
+  }
+
+  /* Quiz navigation buttons */
+  #nextBtn,
+  #exitBtn,
+  #backBtn {
+    margin-top: 12px;
+  }
+
+  /* Score / progress text */
+  #progress,
+  #score {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  /* Scroll handling */
+  #quiz {
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Modal fixes */
+  .modal {
+    width: 92%;
+    max-width: none;
+    padding: 16px;
+  }
+
+  .modal button {
+    margin-top: 10px;
+  }
+
+}
 
     /* ================= MAIN MENU GRID ================= */
 

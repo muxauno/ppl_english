@@ -47,6 +47,110 @@ const subjectPools = {
 };
 
 /**********************************************************
+ * EXAM BLUEPRINTS (FROM EXCEL DISTRIBUTION)
+ * Indexes are 0-based
+ **********************************************************/
+
+const examBlueprints = {
+  airlaw: [
+    { from: 0,  to: 7,   count: 4 },
+    { from: 8,  to: 11,  count: 4 },
+    { from: 21, to: 35,  count: 4 },
+    { from: 36, to: 49,  count: 4 },
+    { from: 50, to: null, count: 4 }
+  ],
+
+  comms: [
+    { from: 0,  to: 14, count: 5 },
+    { from: 15, to: 29, count: 5 },
+    { from: 30, to: 44, count: 5 },
+    { from: 45, to: null, count: 5 }
+  ],
+
+  human: [
+    { from: 0,  to: 24, count: 7 },
+    { from: 25, to: 49, count: 7 },
+    { from: 50, to: null, count: 6 }
+  ],
+
+  meteo: [
+    { from: 0,  to: 19, count: 5 },
+    { from: 20, to: 39, count: 5 },
+    { from: 40, to: 59, count: 5 },
+    { from: 60, to: null, count: 5 }
+  ],
+
+  nav: [
+    { from: 0,  to: 19, count: 5 },
+    { from: 20, to: 39, count: 5 },
+    { from: 40, to: 59, count: 5 },
+    { from: 60, to: null, count: 5 }
+  ],
+
+  ops: [
+    { from: 0,  to: 19, count: 5 },
+    { from: 20, to: 39, count: 5 },
+    { from: 40, to: 59, count: 5 },
+    { from: 60, to: null, count: 5 }
+  ],
+
+  agk: [
+    { from: 0,  to: 99,  count: 10 },
+    { from: 100,to: 136, count: 7 },
+    { from: 137,to: null, count: 3 }
+  ],
+
+  pof: [
+    { from: 0,  to: 24, count: 7 },
+    { from: 25, to: 49, count: 7 },
+    { from: 50, to: null, count: 6 }
+  ],
+
+  perf: [
+    { from: 0,   to: 31,  count: 4 },  // 030.07
+    { from: 32,  to: 84,  count: 4 },  // 030.08
+    { from: 85,  to: 108, count: 4 },  // 030.09
+    { from: 109, to: 136, count: 4 },  // 030.10
+    { from: 137, to: 147, count: 4 }   // 030.11
+  ]
+};
+
+/**********************************************************
+ * BUILD EXAM QUESTIONS
+ **********************************************************/
+
+function buildExamQuestions(subject, pool) {
+  const blueprint = examBlueprints[subject];
+
+  if (!blueprint) {
+    // Safety fallback: random exam
+    return [...pool].sort(() => Math.random() - 0.5).slice(0, 20);
+  }
+
+  let selected = [];
+
+  blueprint.forEach(section => {
+    const end = section.to === null ? pool.length - 1 : section.to;
+    const slice = pool.slice(section.from, end + 1);
+
+    if (slice.length < section.count) {
+      console.warn("Not enough questions in section:", section);
+    }
+
+    // Shuffle ONLY within the section
+    const picked = [...slice]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, section.count);
+
+    // Append in section order
+    selected.push(...picked);
+  });
+
+  return selected; // <-- NO final shuffle
+}
+
+
+/**********************************************************
  * MODE POPUP
  **********************************************************/
 function openModePopup(subject) {
@@ -119,7 +223,7 @@ function startQuiz(subject) {
   document.getElementById("quizEnd").style.display = "none";
 
   if (mode === "exam") {
-    activeQuestions = [...pool].sort(() => Math.random() - 0.5).slice(0, 20);
+    activeQuestions = buildExamQuestions(subject, pool);
   } else {
     activeQuestions = [...pool]; // keep original order
   }
@@ -258,3 +362,54 @@ function shuffleAnswers(question) {
     correct: indexed.findIndex(i => i.idx === question.correct)
   };
 }
+
+/**********************************************************
+ * EXAM HISTORY (LOCAL STORAGE)
+ **********************************************************/
+
+const HISTORY_KEY = "ppl_exam_history";
+
+/* Save exam result */
+function saveExamResult() {
+  const history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+  const result = {
+    subject: subjectNames[currentSubject],
+    correct: correctCount,
+    total: activeQuestions.length,
+    percent: Math.round((correctCount / activeQuestions.length) * 100),
+    date: new Date().toLocaleString()
+  };
+
+  history.unshift(result); // newest first
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+/* Show history screen */
+function showHistory() {
+  const historyDiv = document.getElementById("historyList");
+  historyDiv.innerHTML = "";
+
+  const history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+  if (history.length === 0) {
+    historyDiv.innerHTML = "<p>No exams taken yet.</p>";
+  } else {
+    history.forEach(h => {
+      const p = document.createElement("p");
+      p.innerText =
+        `${h.subject} — ${h.correct}/${h.total} (${h.percent}%) — ${h.date}`;
+      historyDiv.appendChild(p);
+    });
+  }
+
+  document.getElementById("menu").style.display = "none";
+  document.getElementById("history").style.display = "block";
+}
+
+/* Back to main menu */
+function backToMenu() {
+  document.getElementById("history").style.display = "none";
+  document.getElementById("menu").style.display = "block";
+}
+
