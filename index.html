@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PPL Quiz</title>
+
+  <!-- ================= CSS: GLOBAL + LAYOUT ================= -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Correct / wrong answer feedback */
+    .correct { background-color: #c8f7c5; }
+    .wrong   { background-color: #f7c5c5; }
+
+    /* ================= MAIN MENU GRID ================= */
+
+    #menuGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 20px;
+    }
+
+    .menuCol h3 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    /* ================= HISTORY BUTTON ================= */
+
+    #historyBtnWrap {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    #historyBtn {
+      background-color: #d9edf7;
+      color: #31708f;
+      border: 1px solid #bce8f1;
+      width: auto;
+      padding: 10px 20px;
+    }
+
+    #historyBtn:hover {
+      background-color: #c4e3f3;
+    }
+
+    /* ================= QUIZ AREA ================= */
+
+    #quiz { display: none; }
+
+    #progress {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    /* Quiz navigation buttons */
+    #quizControls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    #exitBtn {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+    }
+
+    #exitBtn:hover {
+      background-color: #c9302c;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ================= MAIN MENU ================= -->
+<div id="menu">
+  <h2>Select subject</h2>
+
+  <div id="subjectList">
+<button onclick="openModePopup('airlaw')">Air Law</button>
+<button onclick="openModePopup('comms')">Communication</button>
+<button onclick="openModePopup('human')">Human Performance</button>
+<button onclick="openModePopup('meteo')">Meteorology</button>
+<button onclick="openModePopup('nav')">Navigation</button>
+<button onclick="openModePopup('ops')">Operational Procedures</button>
+<button onclick="openModePopup('perf')">Flight Performance</button>
+<button onclick="openModePopup('agk')">Aircraft General Knowledge</button>
+<button onclick="openModePopup('pof')">Principles of Flight</button>
+
+  </div>
+
+  <div id="historyBtnWrap">
+    <button id="historyBtn" onclick="showHistory()">View exam history</button>
+  </div>
+</div>
+
+
+<!-- ================= HISTORY VIEW ================= -->
+<div id="history" style="display:none">
+  <h2>Exam history</h2>
+  <div id="historyList"></div>
+  <button onclick="backToMenu()">Back</button>
+</div>
+
+<!-- ================= QUIZ ================= -->
+<div id="quiz">
+
+  <!-- Active quiz -->
+  <div id="quizMain">
+    <div id="progress"></div>
+    <h2 id="question"></h2>
+    <div id="answers"></div>
+
+    <div id="quizControls">
+      <button id="nextBtn" onclick="nextQuestion()">Next question</button>
+      <button id="exitBtn" onclick="exitQuiz()">Exit</button>
+    </div>
+  </div>
+<p id="correctCounter" style="margin-top:10px; font-weight:bold;">
+  Correct answers: 0
+</p>
+
+  <!-- Quiz end screen -->
+  <div id="quizEnd" style="display:none"></div>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<!-- SUBJECT DATA FILES -->
+<script src="airlaw.js"></script>
+<script src="communication.js"></script>
+<script src="human.js"></script>
+<script src="meteorology.js"></script>
+<script src="navigation.js"></script>
+<script src="ops.js"></script>
+<script src="performance.js"></script>
+<script src="agk.js"></script>
+<script src="pof.js"></script>
+
+<!-- MAIN LOGIC (LAST) -->
+<script src="script.js"></script>
+
+<!-- ================= EXIT CONFIRM MODAL ================= -->
+<div id="exitModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6);">
+  <div style="
+    background:white;
+    max-width:400px;
+    margin:15% auto;
+    padding:20px;
+    border-radius:8px;
+    text-align:center;
+  ">
+    <h3>Exit quiz?</h3>
+    <p>Your progress will be saved automatically.</p>
+
+    <button onclick="confirmExit()" style="margin-right:10px;">Yes, exit</button>
+    <button onclick="closeExitModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ================= MODE SELECTION MODAL ================= -->
+<div id="modeModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+">
+  <div style="
+    background:white;
+    max-width:350px;
+    margin:15% auto;
+    padding:20px;
+    border-radius:8px;
+    text-align:center;
+  ">
+    <h3 id="modeTitle">Select mode</h3>
+
+    <button onclick="confirmTraining()">Training (full subject)</button>
+    <button onclick="confirmExam()">Exam (20 questions)</button>
+
+    <br><br>
+    <button onclick="closeModePopup()">Cancel</button>
+  </div>
+</div>
+
+</body>
+</html>
